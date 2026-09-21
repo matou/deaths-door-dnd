@@ -6,10 +6,9 @@ async function getHpRangeData(actor) {
     const hp = actor?.system?.attributes?.hp;
     const formula = hp?.formula?.trim();
     const currentHp = Number(hp?.value);
-    const maximumHp = Number(hp?.max);
 
-    if (!formula || !Number.isFinite(currentHp) || !Number.isFinite(maximumHp)
-        || typeof RollClass !== "function") return null;
+    if (!formula || !Number.isFinite(currentHp) || typeof RollClass !== "function") 
+        return null;
 
     try {
         const rollData = actor.getRollData?.() ?? {};
@@ -22,19 +21,20 @@ async function getHpRangeData(actor) {
         const avgRollableHp = Math.ceil((maxRollableHp.total + minRollableHp.total) / 2);
 
         // Actor becomes eligible to be defeated (purple) once it has taken as much or more damage than its minimum rollable HP.
-        const damageTaken = maximumHp-currentHp;
-        const purple = damageTaken >= minRollableHp.total;
+        const purpleThreshold = maxRollableHp.total-minRollableHp.total;
+        const purple = currentHp <= purpleThreshold;
 
         // Once the damage exceeds the average rollable HP, the hint for it to be defeated becomes stronger (amber).
-        const amber = damageTaken >= avgRollableHp;
+        const amberThreshold = maxRollableHp.total-avgRollableHp;
+        const amber = currentHp <= amberThreshold;
+
+        // TODO set bloodied; configurable according to min, max or avg
 
         return {
-            currentHp: currentHp,
-            maxHp: maximumHp,
-            minimumRollableHp: minRollableHp.total,
-            maximumRollableHp: maxRollableHp.total,
             purpleThreshold: purple,
-            amberThreshold: amber
+            amberThreshold: amber,
+            bloodied: false, // TODO
+            text: `${currentHp} (min ≤ ${purpleThreshold}, avg ≤ ${amberThreshold})`
         }
     } catch (error) {
         console.error("Failed to calculate HP range: ", error);
@@ -61,11 +61,21 @@ async function addHpRangeToCombatTracker(app, element) {
         const combatant = combat.combatants.get(row.dataset.combatantId);
         const hpRange = await getHpRangeData(combatant?.actor);
 
+        // Highlight the card when thresholds are reached.
         row.classList.toggle("deaths-door-purple", hpRange.purpleThreshold);
         row.classList.toggle("deaths-door-amber", hpRange.amberThreshold);
+
+        // Add the HP range information
+        const hpRangeAdded = row.querySelector(".deaths-door-hp-range");
+        const name = row.querySelector(".token-name, .combatant-name");
+        if (!name) return;
+
+        const hp = hpRangeAdded ?? document.createElement("span");
+        hp.classList.add("deaths-door-hp-range");
+        hp.title = "current HP (defeated range)";
+        hp.textContent = hpRange.text;
+        if (!hpRangeAdded) name.append(hp);
     }));
-
-
 }
 
 Hooks.on("renderCombatTracker", (app, element) => {
