@@ -1,0 +1,7 @@
+.combatant.deaths-door-purple:not(.hover):not(:hover) {
+  background-color: #1e0020;
+}
+
+.combatant.deaths-door-amber:not(.hover):not(:hover) {
+  background-color: #291200;
+}
