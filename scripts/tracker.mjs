@@ -16,12 +16,9 @@ async function getHpRangeData(actor) {
         const amberThreshold = hpRange.maximumHp - hpRange.averageHp;
         const amber = currentHp <= amberThreshold;
 
-        // TODO set bloodied; configurable according to min, max or avg
-
         return {
             purpleThreshold: purple,
             amberThreshold: amber,
-            bloodied: false, // TODO
             text: `${currentHp} (min ≤ ${purpleThreshold}, avg ≤ ${amberThreshold})`
         }
     } catch (error) {
