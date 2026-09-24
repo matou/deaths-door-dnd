@@ -4,7 +4,13 @@ export async function updateBloodiedDeathsDoor(actor) {
     try {
         const hpRange = await getMinMaxAvgHp(actor);
         const hp = actor.system.attributes.hp;
-        const bloodiedThreshold = hp.effectiveMax - hpRange.averageHp / 2;
+        const bloodiedBasis = game.settings.get("deaths-door-dnd", "bloodiedBasis");
+        const selectedHp = {
+            maximum: hpRange.maximumHp,
+            minimum: hpRange.minimumHp,
+            average: hpRange.averageHp
+        }[bloodiedBasis];
+        const bloodiedThreshold = hpRange.maximumHp - selectedHp / 2;
         const isBloodied = hp.value <= bloodiedThreshold;
 
         const effectId = "dnd5ebloodied000";
