@@ -16,7 +16,7 @@ This way, the encounters can be more dynamically adapted to how the fight should
 
 ## The Death's Door D&D Module for FoundryVTT
 
-To facilitate *Hit Point Ranges* in FoundryVTT, I've come up with this module. It these things: 
+To facilitate *Hit Point Ranges* in FoundryVTT, I've come up with this module. It does these things: 
 
 - Set the monster's HP to their maximum rollable value when they're added to the scene. 
 - Add the HP range information and current HP to the combatant's card in the combat tracker. 
