@@ -1,30 +1,19 @@
+import { getMinMaxAvgHp } from "./hp.mjs";
+
 const COMBATANT_SELECTOR = ".combatant[data-combatant-id]";
 
 async function getHpRangeData(actor) {
-    const RollClass = globalThis.Roll;
-    const hp = actor?.system?.attributes?.hp;
-    const formula = hp?.formula?.trim();
-    const currentHp = Number(hp?.value);
-
-    if (!formula || !Number.isFinite(currentHp) || typeof RollClass !== "function") 
-        return null;
-
     try {
-        const rollData = actor.getRollData?.() ?? {};
-        const minRoll = new RollClass(formula, rollData);
-        const maxRoll = new RollClass(formula, rollData);
-        const [minRollableHp, maxRollableHp] = await Promise.all([
-            minRoll.evaluate({ minimize: true }),
-            maxRoll.evaluate({ maximize: true})
-        ]);
-        const avgRollableHp = Math.ceil((maxRollableHp.total + minRollableHp.total) / 2);
+        const hp = actor.system.attributes.hp;
+        const currentHp = Number(hp.value);
+        const hpRange = await getMinMaxAvgHp(actor);
 
         // Actor becomes eligible to be defeated (purple) once it has taken as much or more damage than its minimum rollable HP.
-        const purpleThreshold = maxRollableHp.total-minRollableHp.total;
+        const purpleThreshold = hpRange.maximumHp - hpRange.minimumHp;
         const purple = currentHp <= purpleThreshold;
 
         // Once the damage exceeds the average rollable HP, the hint for it to be defeated becomes stronger (amber).
-        const amberThreshold = maxRollableHp.total-avgRollableHp;
+        const amberThreshold = hpRange.maximumHp - hpRange.averageHp;
         const amber = currentHp <= amberThreshold;
 
         // TODO set bloodied; configurable according to min, max or avg
