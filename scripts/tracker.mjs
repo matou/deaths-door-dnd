@@ -40,7 +40,7 @@ function getCombatTrackerRoot(app, element) {
 
 export async function addHpRangeToCombatTracker(app, element) {
     const root = getCombatTrackerRoot(app, element);
-    if (!root || !game.user.isGM) return;
+    if (!root) return;
 
     // Only do something when there's active combat. 
     const combat = app.viewed ?? game.combat;

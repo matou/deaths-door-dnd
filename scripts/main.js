@@ -3,14 +3,20 @@ import { maximizeHp } from "./hp-max.mjs"
 import { updateBloodiedDeathsDoor } from "./bloodied.mjs"
 
 Hooks.on("renderCombatTracker", (app, element) => {
+    if (!game.user.isGM) return;
+
     void addHpRangeToCombatTracker(app, element);
 });
 
 Hooks.on("createToken", (tokenDocument, options, userId) => {
+    if (!game.user.isGM) return;
+
     void maximizeHp(tokenDocument, options, userId);
 });
 
 Hooks.once("ready", () => {
+    if (!game.user.isGM) return;
+
     const actorPrototype = CONFIG.Actor.documentClass.prototype;
     const updateBloodied = actorPrototype.updateBloodied;
 
@@ -23,6 +29,8 @@ Hooks.once("ready", () => {
 });
 
 Hooks.once("init", () => {
+    if (!game.user.isGM) return;
+
     game.settings.register("deaths-door-dnd", "bloodiedBasis", {
         name: "Bloodied HP basis",
         hint: "Choose which HP value determines how much damage makes an NPC bloodied. This module maximizes HP for NPCs: a monster with 2d8+2 will always get 18 maximum HP. But for the bloodied status, the default is to make it bloodied, once it takes enough damage, so it would be bloodied if it had the average maximum HP (as typically stated on the stat block). You can choose to take the maximum or minimum HP as a basis, instead.",
@@ -40,7 +48,7 @@ Hooks.once("init", () => {
     game.settings.register("deaths-door-dnd", "trackDamage", {
         name: "Track damage instead of HP",
         hint: "By default, the combatant cards in the combat tracker get information added, that shows the damage taken and the range of the minimum to maximum rollable HP for an NPC/monster. Disable this to track HP rather than damage.",
-        scope: "world", 
+        scope: "user", 
         config: true,
         type: Boolean,
         default: true
