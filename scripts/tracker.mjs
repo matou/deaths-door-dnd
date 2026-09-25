@@ -7,6 +7,7 @@ async function getHpRangeData(actor) {
         const hp = actor.system.attributes.hp;
         const currentHp = Number(hp.value);
         const hpRange = await getMinMaxAvgHp(actor);
+        const currentDamage = hpRange.maximumHp - currentHp;
 
         // Actor becomes eligible to be defeated (purple) once it has taken as much or more damage than its minimum rollable HP.
         const purpleThreshold = hpRange.maximumHp - hpRange.minimumHp;
@@ -16,10 +17,14 @@ async function getHpRangeData(actor) {
         const amberThreshold = hpRange.maximumHp - hpRange.averageHp;
         const amber = currentHp <= amberThreshold;
 
+        const cardText = game.settings.get("deaths-door-dnd", "trackDamage") 
+            ? `Damage: ${currentDamage} (${hpRange.minimumHp}\u200A–\u200A${hpRange.maximumHp})`
+            : `HP: ${currentHp} (min ≤ ${purpleThreshold}, avg ≤ ${amberThreshold})`;
+
         return {
             purpleThreshold: purple,
             amberThreshold: amber,
-            text: `${currentHp} (min ≤ ${purpleThreshold}, avg ≤ ${amberThreshold})`
+            text: cardText
         }
     } catch (error) {
         console.error("Failed to calculate HP range: ", error);

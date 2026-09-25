@@ -36,4 +36,13 @@ Hooks.once("init", () => {
         },
         default: "average"
     });
+
+    game.settings.register("deaths-door-dnd", "trackDamage", {
+        name: "Track damage instead of HP",
+        hint: "By default, the combatant cards in the combat tracker get information added, that shows the damage taken and the range of the minimum to maximum rollable HP for an NPC/monster. Disable this to track HP rather than damage.",
+        scope: "world", 
+        config: true,
+        type: Boolean,
+        default: true
+    });
 });
