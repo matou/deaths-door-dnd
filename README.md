@@ -19,7 +19,7 @@ This way, the encounters can be more dynamically adapted to how the fight should
 To facilitate *Hit Point Ranges* in FoundryVTT, I've come up with this module. It does these things: 
 
 - Set the monster's HP to their maximum rollable value when they're added to the scene. 
-- Add the HP range information and current HP to the combatant's card in the combat tracker. 
+- Add the HP range information and current damage taken (or optionally current hp) to the combatant's card in the combat tracker. 
 - Once the combatant takes damage of at least its minimum rollable HP, the card in the combat tracker is highlighted purple to show its eligibility to be defeated. 
 - Once the combatant takes damage of the average rollable HP, the card is highlighted amber to show that the monster with average HP would be defeated by now. 
 - The bloodied status can be configured to be set on half maximum rollable HP, half minimum rollable HP, or half average rollable HP. 
