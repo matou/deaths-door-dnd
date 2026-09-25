@@ -24,6 +24,7 @@ async function getHpRangeData(actor) {
         return {
             purpleThreshold: purple,
             amberThreshold: amber,
+            zeroHp: currentHp <= 0,
             text: cardText
         }
     } catch (error) {
@@ -50,10 +51,12 @@ export async function addHpRangeToCombatTracker(app, element) {
     await Promise.all(Array.from(rows, async (row) => {
         const combatant = combat.combatants.get(row.dataset.combatantId);
         const hpRange = await getHpRangeData(combatant?.actor);
+        if (!hpRange) return;
 
         // Highlight the card when thresholds are reached.
         row.classList.toggle("deaths-door-purple", hpRange.purpleThreshold);
         row.classList.toggle("deaths-door-amber", hpRange.amberThreshold);
+        row.classList.toggle("deaths-door-zero-hp", hpRange.zeroHp);
 
         // Add the HP range information
         const hpRangeAdded = row.querySelector(".deaths-door-hp-range");

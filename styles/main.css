@@ -6,6 +6,10 @@
     background-color: #291200;
 }
 
+.combatant.deaths-door-zero-hp:not(.hover):not(:hover) {
+    background-color: #2b0000;
+}
+
 .deaths-door-hp-range {
     display: block;
     margin-top: 0.1rem;
